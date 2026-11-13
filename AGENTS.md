@@ -4,33 +4,38 @@ Instructions for AI coding agents working in this repository.
 
 ## Project
 
-Personal portfolio built with Nuxt 4 (`app/` directory structure, Nuxt 4.6+). Content pages are driven by Nuxt Content (`content/*.md` rendered by the catch-all page `app/pages/[...slug].vue` via `queryCollection('content')`).
+Personal portfolio built with Nuxt 4 (`app/` directory structure, Nuxt 4.6+). Static pages live in `app/pages/` (`index.vue`, `about.vue`, `contact.vue`, `projects/[slug].vue`). Project write-ups are Nuxt Content pages (`content/projects/*.md`) rendered by `app/pages/projects/[slug].vue` via `queryCollection('projects')`. Site identity, contact links, and the canonical base URL live in `shared/site.config.ts`.
 
 ## Commands
 
 - Package manager: **pnpm** (only pnpm is locked; README shows npm/yarn/bun options but they are not used).
 - `pnpm dev` — dev server at http://localhost:3000
 - `pnpm build` / `pnpm preview` / `pnpm generate` — production build / preview / static generation
+- `pnpm test` — Vitest suite (`vitest run`) covering SEO helpers, sitemap generation, and theme utilities
 - `npx nuxt prepare` — generates `.nuxt/` TypeScript references (must run before any `tsc` / typecheck).
-- No test, lint, or CI setup exists yet. `pnpm build` plus a dev-server smoke test (`curl http://localhost:3000/...`) is the current verification path.
 
-## Known gaps in the content setup (as of last verification)
+There is no lint, typecheck, or CI setup; `pnpm generate` + `pnpm test` + inspecting the generated HTML in `.output/public/` is the verification path.
 
-The content pipeline is only half-wired; `pnpm dev`/`pnpm build` **succeed silently**, but content does not render:
+## Verify rendered output, not build success
 
-1. `content.config.ts` imports `@nuxt/content`, but the package is **not** in `package.json`/`pnpm-lock.yaml`. Without it, Nuxt silently ignores `content.config.ts`.
-2. `nuxt.config.ts` has no `modules` entry — `@nuxt/content` must be both installed (`pnpm add @nuxt/content`) and registered in `modules: [...]` to take effect.
-3. `app/app.vue` still renders `<NuxtWelcome />` and has no `<NuxtPage />`, so every route serves the welcome page (watch for warning `NUXT_E4011` in the page payload) and `app/pages/[...slug].vue` never mounts.
+`pnpm dev`/`pnpm build` can succeed while pages render the wrong thing (missing content, stale title, dead link). After touching pages, content, SEO, or config, regenerate and inspect the actual HTML:
 
-Do not assume content routes work just because the dev server starts. If a task touches content rendering, verify the actual HTML output, not the build success.
+```bash
+pnpm generate
+grep -o "<title>[^<]*" .output/public/index.html
+grep -c 'rel="canonical"' .output/public/about/index.html
+grep -ro '<a [^>]*href="https://example.com[^"]*"' .output/public --include="*.html"  # must be empty
+```
 
 ## Quirks
 
 - `tsconfig.json` is only references into generated configs in `.nuxt/` (`tsconfig.app.json` etc.). Run `pnpm install` (postinstall runs `nuxt prepare`) or `npx nuxt prepare` before any tsc-based check.
 - `pnpm-workspace.yaml` sets `allowBuilds: esbuild: false` — esbuild's postinstall script is intentionally not run.
-- `content/index.md` uses MDC component syntax (`::alert`), backed by `app/components/Alert.vue` / `Counter.vue` — Vue components usable directly in markdown.
-- `.data/`, `.nuxt/`, `.output/` are generated/gitignored; `.data/kv` holds Nuxt Content's local database.
-- Git repo is fresh: `master` has no commits yet (create an initial baseline commit before creating branches or git worktrees).
+- `@nuxt/content` uses `experimental.sqliteConnector: "native"` (Node ≥22.5) to avoid `better-sqlite3` build scripts that pnpm 10 blocks.
+- `.data/`, `.nuxt/`, `.output/` are generated/gitignored; `.data/content` and `.data/kv` hold Nuxt Content's local database.
+- `pnpm generate` emits `.output/public/__nuxt_content/projects/sql_dump.txt`; static hosting must serve the `__nuxt_content/` tree or project pages fail to hydrate their content.
+- `https://example.com` is a single placeholder URL in `shared/site.config.ts`. Swap that one value before deploying — canonical URLs, Open Graph URLs, and `sitemap.xml` all follow it. It must never appear in a UI `<a href>`.
+- `master` holds the initial baseline commit; feature work happens on branches such as `feature/portfolio`. The repo is no longer empty — don't assume there is no history.
 
 ## Strict SEO & Performance Rules (Mandatory for All Pages & Components)
 
