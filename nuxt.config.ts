@@ -6,4 +6,10 @@ export default defineNuxtConfig({
   content: {
     experimental: { sqliteConnector: "native" }, // Node ≥22.5; avoids better-sqlite3 build scripts blocked by pnpm 10
   },
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ["/sitemap.xml", "/robots.txt"],
+    },
+  },
 });
