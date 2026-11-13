@@ -13,9 +13,27 @@ if (!project.value) {
   });
 }
 
-useSeoMeta({
-  title: project.value.title,
-  description: project.value.description,
+useHead(
+  pageSeo({
+    title: project.value.title,
+    description: project.value.description,
+    path: route.path,
+  }),
+);
+useHead({
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify(
+        softwareJsonLd({
+          name: project.value.title,
+          description: project.value.description,
+          programmingLanguage: project.value.stack,
+          codeRepository: project.value.repo,
+        }),
+      ),
+    },
+  ],
 });
 </script>
 
