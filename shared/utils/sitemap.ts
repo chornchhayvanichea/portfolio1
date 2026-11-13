@@ -1,3 +1,12 @@
+import { buildUrl } from "./seo";
+
+export function buildSitemapLocs(
+  staticPaths: string[],
+  projectPaths: string[],
+): string[] {
+  return [...staticPaths, ...projectPaths].map(buildUrl);
+}
+
 export function buildSitemapXml(locs: string[]): string {
   const urls = locs
     .map((loc) => `  <url><loc>${loc}</loc></url>`)

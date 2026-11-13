@@ -1,6 +1,6 @@
 ---
 title: This Portfolio
-description: The site you are reading — a statically generated Nuxt 4 portfolio with hand-rolled SEO, sitemap, design tokens, and near-zero client JavaScript.
+description: The site you are reading — a statically generated Nuxt 4 portfolio with hand-rolled SEO, prerendered sitemap/robots routes, design tokens, and no client-side UI framework.
 stack: [Nuxt 4, Vue 3, TypeScript, Nitro, Vitest]
 featured: 2
 ---

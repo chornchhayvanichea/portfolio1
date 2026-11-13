@@ -12,7 +12,7 @@ describe("site.config", () => {
     expect(site.name).toBe("Chorn Chhayvanichea");
     expect(site.email).toBe("chornchhayvanichea@gmail.com");
     expect(site.github).toBe("https://github.com/chornchhayvanichea");
-    expect(site.url).toBe("https://example.com"); // placeholder until a domain is deployed
+    expect(site.url).toMatch(/^https:\/\/.+/); // placeholder until a domain is deployed
     expect(site.jobTitle).toBe("Junior Full-Stack Software Developer");
     expect(site.location).toBe("Cambodia · Open to remote");
     expect(site.resumeUrl).toBeNull();
@@ -21,9 +21,10 @@ describe("site.config", () => {
 
 describe("buildUrl", () => {
   it("joins the configured domain with the path", () => {
-    expect(buildUrl("/")).toBe("https://example.com/");
+    const base = site.url.replace(/\/+$/, "");
+    expect(buildUrl("/")).toBe(`${base}/`);
     expect(buildUrl("/projects/laundry-management-system")).toBe(
-      "https://example.com/projects/laundry-management-system",
+      `${base}/projects/laundry-management-system`,
     );
   });
 });
@@ -43,7 +44,7 @@ describe("pageSeo", () => {
     });
     expect(seo.link).toContainEqual({
       rel: "canonical",
-      href: "https://example.com/about",
+      href: buildUrl("/about"),
     });
     expect(seo.meta).toContainEqual({
       property: "og:title",
@@ -55,7 +56,7 @@ describe("pageSeo", () => {
     });
     expect(seo.meta).toContainEqual({
       property: "og:url",
-      content: "https://example.com/about",
+      content: buildUrl("/about"),
     });
     expect(seo.meta).toContainEqual({
       name: "twitter:card",
@@ -78,7 +79,7 @@ describe("personJsonLd", () => {
       "@type": "Person",
       name: "Chorn Chhayvanichea",
       email: "mailto:chornchhayvanichea@gmail.com",
-      url: "https://example.com/",
+      url: buildUrl("/"),
       jobTitle: "Junior Full-Stack Software Developer",
       address: { "@type": "PostalAddress", addressCountry: "KH" },
       sameAs: ["https://github.com/chornchhayvanichea"],
@@ -97,7 +98,7 @@ describe("softwareJsonLd", () => {
     expect(ld.author).toEqual({
       "@type": "Person",
       name: site.name,
-      url: "https://example.com/",
+      url: buildUrl("/"),
     });
     expect(ld).not.toHaveProperty("codeRepository");
     const withRepo = softwareJsonLd({

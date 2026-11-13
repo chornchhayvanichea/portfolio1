@@ -24,9 +24,8 @@ const stack = [
 
 useHead({
   ...pageSeo({
-    title: "Chorn Chhayvanichea — Junior Full-Stack Software Developer",
-    description:
-      "Portfolio of Chorn Chhayvanichea — junior full-stack software developer in Cambodia, focused on Go, Vue 3, Nuxt 4, and PostgreSQL. Open to remote work.",
+    title: `${site.name} — ${site.jobTitle}`,
+    description: `Portfolio of ${site.name} — junior full-stack software developer in Cambodia, focused on Go, Vue 3, Nuxt 4, and PostgreSQL. Open to remote work.`,
     path: "/",
     ogType: "website",
     suffix: false,

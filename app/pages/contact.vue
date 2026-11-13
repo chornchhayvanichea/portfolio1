@@ -4,8 +4,7 @@ import { site } from "#shared/site.config";
 useHead(
   pageSeo({
     title: "Contact",
-    description:
-      "Contact Chorn Chhayvanichea — by email or GitHub. Based in Cambodia, open to remote opportunities.",
+    description: `Contact ${site.name} — by email or GitHub. Based in Cambodia, open to remote opportunities.`,
     path: "/contact",
   }),
 );

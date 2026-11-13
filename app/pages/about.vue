@@ -4,8 +4,7 @@ import { site } from "#shared/site.config";
 useHead(
   pageSeo({
     title: "About",
-    description:
-      "About Chorn Chhayvanichea — junior full-stack developer interested in backend engineering, Go, Rust, and how software systems work internally.",
+    description: `About ${site.name} — junior full-stack developer interested in backend engineering, Go, Rust, and how software systems work internally.`,
     path: "/about",
   }),
 );
