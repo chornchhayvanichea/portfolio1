@@ -11,6 +11,7 @@ useHead({
   <div class="site">
     <SiteHeader />
     <main>
+      <NuxtRouteAnnouncer />
       <NuxtPage />
     </main>
     <SiteFooter />

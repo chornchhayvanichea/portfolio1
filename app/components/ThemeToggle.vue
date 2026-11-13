@@ -3,7 +3,11 @@ import { nextTheme, type Theme } from "#shared/utils/theme";
 
 function toggle() {
   const next = nextTheme(document.documentElement.dataset.theme as Theme);
-  localStorage.setItem("theme", next);
+  try {
+    localStorage.setItem("theme", next);
+  } catch {
+    // Storage can be blocked; the theme still applies for this session.
+  }
   document.documentElement.dataset.theme = next;
 }
 </script>
